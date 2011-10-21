@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:soapui-project name="Mule ESB Prototype Scenario 1" resourceRoot="${projectDir}" soapui-version="4.0.1"
+                    xmlns:con="http://eviware.com/soapui/config">
+    <con:settings/>
+    <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="Greeter_SOAPBinding" type="wsdl"
+                   bindingName="{http://apache.org/hello_world_soap_http}Greeter_SOAPBinding" soapVersion="1_1" anonymous="optional"
+                   definition="src/main/wsdl/hello_world.wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <con:settings/>
+        <con:definitionCache type="TEXT" rootPart="file:/C:/work/mule-esb-prototype/mule-prototype-s1/src/main/wsdl/hello_world.wsdl">
+            <con:part>
+                <con:url>file:/C:/work/mule-esb-prototype/mule-prototype-s1/src/main/wsdl/hello_world.wsdl</con:url>
+                <con:content><![CDATA[<!--Licensed to the Apache Software Foundation (ASF) under one
+  or more contributor license agreements. See the NOTICE file
+  distributed with this work for additional information
+  regarding copyright ownership. The ASF licenses this file
+  to you under the Apache License, Version 2.0 (the
+  "License"); you may not use this file except in compliance
+  with the License. You may obtain a copy of the License at
+ 
+  http://www.apache.org/licenses/LICENSE-2.0
+ 
+  Unless required by applicable law or agreed to in writing,
+  software distributed under the License is distributed on an
+  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  KIND, either express or implied. See the License for the
+  specific language governing permissions and limitations
+  under the License.-->
+<wsdl:definitions name="HelloWorld" targetNamespace="http://apache.org/hello_world_soap_http" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://apache.org/hello_world_soap_http" xmlns:x1="http://apache.org/hello_world_soap_http/types" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <wsdl:types>
+    <schema targetNamespace="http://apache.org/hello_world_soap_http/types" elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://apache.org/hello_world_soap_http/types">
+      <simpleType name="MyStringType">
+        <restriction base="string">
+          <maxLength value="30"/>
+        </restriction>
+      </simpleType>
+      <element name="greetMe">
+        <complexType>
+          <sequence>
+            <element name="requestType" type="tns:MyStringType"/>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="greetMeResponse">
+        <complexType>
+          <sequence>
+            <element name="responseType" type="string"/>
+          </sequence>
+        </complexType>
+      </element>
+    </schema>
+  </wsdl:types>
+  <wsdl:message name="greetMeRequest">
+    <wsdl:part element="x1:greetMe" name="in"/>
+  </wsdl:message>
+  <wsdl:message name="greetMeResponse">
+    <wsdl:part element="x1:greetMeResponse" name="out"/>
+  </wsdl:message>
+  <wsdl:portType name="Greeter">
+    <wsdl:operation name="greetMe">
+      <wsdl:input message="tns:greetMeRequest" name="greetMeRequest"/>
+      <wsdl:output message="tns:greetMeResponse" name="greetMeResponse"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="Greeter_SOAPBinding" type="tns:Greeter">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="greetMe">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="greetMeRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="greetMeResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="SOAPService">
+    <wsdl:port binding="tns:Greeter_SOAPBinding" name="Greeter">
+      <soap:address location="http://localhost:8130/Greeter"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>]]></con:content>
+                <con:type>http://schemas.xmlsoap.org/wsdl/</con:type>
+            </con:part>
+        </con:definitionCache>
+        <con:endpoints>
+            <con:endpoint>http://localhost:8130/Greeter</con:endpoint>
+            <con:endpoint>http://localhost:8088/Greeter</con:endpoint>
+        </con:endpoints>
+        <con:operation isOneWay="false" action="" name="greetMe" bindingOperationName="greetMe" type="Request-Response" outputName="greetMeResponse"
+                       inputName="greetMeRequest" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+            <con:settings/>
+            <con:call name="Request 1">
+                <con:settings/>
+                <con:encoding>UTF-8</con:encoding>
+                <con:endpoint>http://localhost:8130/Greeter</con:endpoint>
+                <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:typ="http://apache.org/hello_world_soap_http/types">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <typ:greetMe>
+         <typ:requestType>?</typ:requestType>
+      </typ:greetMe>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+                <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://apache.org/hello_world_soap_http/Greeter/greetMeRequest"/>
+            </con:call>
+        </con:operation>
+    </con:interface>
+    <con:testSuite name="Greeter_SOAPBinding TestSuite">
+        <con:settings/>
+        <con:runType>SEQUENTIAL</con:runType>
+        <con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="greetMe TestCase"
+                      searchProperties="true">
+            <con:settings/>
+            <con:testStep type="request" name="greetMe">
+                <con:settings/>
+                <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                    <con:interface>Greeter_SOAPBinding</con:interface>
+                    <con:operation>greetMe</con:operation>
+                    <con:request name="greetMe">
+                        <con:settings>
+                            <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
+                        </con:settings>
+                        <con:encoding>UTF-8</con:encoding>
+                        <con:endpoint>http://localhost:8088/Greeter</con:endpoint>
+                        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:typ="http://apache.org/hello_world_soap_http/types">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <typ:greetMe>
+         <typ:requestType>World</typ:requestType>
+      </typ:greetMe>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+                        <con:assertion type="Valid HTTP Status Codes" name="Valid HTTP Status Codes">
+                            <con:configuration>
+                                <codes>200</codes>
+                            </con:configuration>
+                        </con:assertion>
+                        <con:assertion type="SOAP Response" name="SOAP Response"/>
+                        <con:assertion type="SOAP Fault Assertion" name="Not SOAP Fault"/>
+                        <con:assertion type="Schema Compliance" name="Schema Compliance">
+                            <con:configuration>
+                                <definition/>
+                            </con:configuration>
+                        </con:assertion>
+                        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+                        <con:jmsPropertyConfig/>
+                        <con:wsaConfig action="http://apache.org/hello_world_soap_http/Greeter/greetMeRequest" mustUnderstand="NONE"
+                                       version="200508"/>
+                        <con:wsrmConfig version="1.2"/>
+                    </con:request>
+                </con:config>
+            </con:testStep>
+            <con:properties/>
+            <con:reportParameters/>
+        </con:testCase>
+        <con:properties/>
+        <con:reportParameters/>
+    </con:testSuite>
+    <con:mockService port="8130" path="/Greeter" host="SNDT3182" name="Greeter_SOAPBinding MockService">
+        <con:settings>
+            <con:setting id="com.eviware.soapui.impl.wsdl.mock.WsdlMockService@require-soap-action">false</con:setting>
+        </con:settings>
+        <con:mockOperation name="greetMe" interface="Greeter_SOAPBinding" operation="greetMe">
+            <con:settings/>
+            <con:dispatchStyle>SEQUENCE</con:dispatchStyle>
+            <con:defaultResponse>Response 1</con:defaultResponse>
+            <con:response name="Response 1" encoding="UTF-8">
+                <con:settings/>
+                <con:responseContent><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:typ="http://apache.org/hello_world_soap_http/types">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <typ:greetMeResponse>
+         <typ:responseType>Hello ${#MockResponse#Request#declare namespace typ='http://apache.org/hello_world_soap_http/types'; //typ:greetMe[1]/typ:requestType[1]}</typ:responseType>
+      </typ:greetMeResponse>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:responseContent>
+                <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://apache.org/hello_world_soap_http/Greeter/greetMeResponse"/>
+            </con:response>
+            <con:dispatchConfig/>
+        </con:mockOperation>
+        <con:properties/>
+    </con:mockService>
+    <con:requirements/>
+    <con:properties/>
+    <con:wssContainer/>
+    <con:databaseConnectionContainer/>
+</con:soapui-project>
