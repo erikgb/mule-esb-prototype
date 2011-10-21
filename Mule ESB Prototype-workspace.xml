@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:soapui-workspace name="Mule ESB Prototype" soapui-version="4.0.1" xmlns:con="http://eviware.com/soapui/config">
+    <con:settings/>
+    <con:project status="CLOSED" name="Mule ESB Prototype Scenario 1">
+        C:/work/mule-esb-prototype/mule-prototype-s1/Mule-ESB-Prototype-Scenario-1-soapui-project.xml
+    </con:project>
+</con:soapui-workspace>

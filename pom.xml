@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>no.statnett.esb.mule</groupId>
+    <artifactId>mule-prototype</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0-SNAPSHOT</version>
+
+    <name>Mule Prototype Aggregator</name>
+
+    <modules>
+        <module>mule-prototype-s1</module>
+        <!--module>mule-prototype-s2</module-->
+    </modules>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <!--
+                    Use a newer version of the install plugin than what your Maven uses by default. The
+                    older version failed to install the project if there was no target/classes folder.
+                    Since we use mule packaging on the project we actually create and attach the zip that
+                    must be installed.
+                -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-install-plugin</artifactId>
+                    <version>2.3.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>2.3.2</version>
+                    <configuration>
+                        <source>${jdk.version}</source>
+                        <target>${jdk.version}</target>
+                        <encoding>ISO-8859-1</encoding>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+            <plugin>
+                <groupId>org.mule.tools</groupId>
+                <artifactId>maven-mule-plugin</artifactId>
+                <version>1.6</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <copyToAppsDirectory>true</copyToAppsDirectory>
+                </configuration>
+            </plugin>
+            <!--
+                make sure that MULE_HOME is set when building (required below when copying the
+                artifact to Mule's apps directory
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>1.0-beta-1</version>
+                <executions>
+                    <execution>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireProperty>
+                                    <property>env.MULE_HOME</property>
+                                    <message>You must set MULE_HOME before installing the example.</message>
+                                </requireProperty>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!--
+                automatically deploy the artifact after it has been built
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.4</version>
+                <executions>
+                    <execution>
+                        <id>package-example</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <copy file="${project.build.directory}/${project.build.finalName}.zip"
+                                      todir="${env.MULE_HOME}/apps" overwrite="true"/>
+                            </tasks>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- Mule Dependencies -->
+            <dependency>
+                <groupId>org.mule</groupId>
+                <artifactId>mule-core</artifactId>
+                <version>${mule.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <!-- Xml configuration -->
+            <dependency>
+                <groupId>org.mule.modules</groupId>
+                <artifactId>mule-module-spring-config</artifactId>
+                <version>${mule.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.mule.modules</groupId>
+                <artifactId>mule-module-cxf</artifactId>
+                <version>${mule.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.mule.modules</groupId>
+                <artifactId>mule-module-xml</artifactId>
+                <version>${mule.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+
+            <dependency>
+                <groupId>org.mule.patterns</groupId>
+                <artifactId>mule-pattern-core</artifactId>
+                <version>${mule.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <!-- Mule Transports -->
+            <dependency>
+                <groupId>org.mule.transports</groupId>
+                <artifactId>mule-transport-http</artifactId>
+                <version>${mule.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.mule.transports</groupId>
+                <artifactId>mule-transport-vm</artifactId>
+                <version>${mule.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.mule.transports</groupId>
+                <artifactId>mule-transport-jms</artifactId>
+                <version>${mule.version}</version>
+                <scope>provided</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <mule.version>3.2.0</mule.version>
+        <!-- Tools properties -->
+        <jdk.version>1.6</jdk.version>
+    </properties>
+</project>

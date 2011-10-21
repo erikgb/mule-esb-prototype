@@ -12,60 +12,34 @@
         http://www.mulesoft.org/schema/mule/xml http://www.mulesoft.org/schema/mule/xml/3.2/mule-xml.xsd
         http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/3.2/mule-vm.xsd">
 
-    <!--mulexml:namespace-manager>
+    <mulexml:namespace-manager>
         <mulexml:namespace prefix="soapenv" uri="http://schemas.xmlsoap.org/soap/envelope/"/>
-        <mulexml:namespace prefix="v1" uri="http://eterra.com/emp/contract/ptc/definition/v1"/>
-        <mulexml:namespace prefix="v11" uri="http://eterra.com/emp/schema/ptc/definition/v1"/>
+        <mulexml:namespace prefix="e" uri="http://example.com"/>
     </mulexml:namespace-manager>
 
-    <vm:endpoint name="SiteServiceVmEndpoint" path="SiteService" exchange-pattern="request-response"/>
+    <vm:endpoint name="UserIdMappingVmEndpoint" path="UserIdMapping" exchange-pattern="request-response"/>
 
-    <flow name="SiteService">
-        <composite-source>
-            <http:inbound-endpoint address="http://localhost:8088/mockSiteInformationServiceSoapBinding" exchange-pattern="request-response">
-                <cxf:jaxws-service serviceClass="com.eterra._public.services.cfgsite.v20110412.SiteInformationService"/>
-            </http:inbound-endpoint>
-            <vm:inbound-endpoint ref="SiteServiceVmEndpoint"/>
-        </composite-source>
-        <cxf:jaxws-client
-                clientClass="com.eterra._public.services.cfgsite.v20110412.SiteInformationService_Service"
-                port="SiteInformationServicePort"
-                wsdlLocation="classpath:/wsdl/SiteInformationService.wsdl"
-                operation="SiteState"/>
-        <http:outbound-endpoint address="http://localhost:8130/mockSiteInformationServiceSoapBinding"/>
-    </flow-->
+    <flow name="UserIdMapping">
+        <vm:inbound-endpoint ref="UserIdMappingVmEndpoint"/>
+        <append-string-transformer message="Mapped"/>
+    </flow>
 
     <flow name="ServiceGateway">
         <http:inbound-endpoint address="http://localhost:8088" exchange-pattern="request-response"/>
         <cxf:proxy-service payload="envelope"/>
-        <!--enricher target="#[header:siteResponse]" source="#[bean:siteState]">
-            <choice>
-                <when expression="INBOUND:transformer=simple" evaluator="header">
-                    <vm:outbound-endpoint ref="SiteServiceVmEndpoint">
-                        <bean-builder-transformer beanClass="com.eterra._public.services.cfgsite.v20110412.datatypes.SiteStateRequest">
-                            <bean-property property-name="siteName" evaluator="string" expression="Site EMS Main Primary"/>
-                        </bean-builder-transformer>
-                    </vm:outbound-endpoint>
-                </when>
-                <when expression="INBOUND:transformer=xpath" evaluator="header">
-                    <vm:outbound-endpoint ref="SiteServiceVmEndpoint">
-                        <bean-builder-transformer beanClass="com.eterra._public.services.cfgsite.v20110412.datatypes.SiteStateRequest">
-                            <bean-property property-name="siteName" evaluator="xpath"
-                                           expression="//soapenv:Envelope/soapenv:Body/v1:createPTCDefinition[1]/v1:PTCDefinition[1]/v11:PTCName[1]"/>
-                        </bean-builder-transformer>
-                    </vm:outbound-endpoint>
-                </when>
-                <when expression="INBOUND:transformer=xpathTransformed" evaluator="header">
-                    <vm:outbound-endpoint ref="SiteServiceVmEndpoint">
-                        <mulexml:dom-to-xml-transformer/>
-                        <bean-builder-transformer beanClass="com.eterra._public.services.cfgsite.v20110412.datatypes.SiteStateRequest">
-                            <bean-property property-name="siteName" evaluator="xpath"
-                                           expression="//soapenv:Envelope/soapenv:Body/v1:createPTCDefinition[1]/v1:PTCDefinition[1]/v11:PTCName[1]"/>
-                        </bean-builder-transformer>
-                    </vm:outbound-endpoint>
-                </when>
-            </choice>
-        </enricher-->
+        <enricher target="#[header:mappedUserId]">
+            <processor-chain>
+                <choice>
+                    <when expression="INBOUND:transformer=xpath" evaluator="header">
+                        <expression-transformer evaluator="xpath" expression="//soapenv:Envelope/soapenv:Header/e:userId"/>
+                    </when>
+                    <otherwise>
+                        <expression-transformer evaluator="string" expression="staticUserId"/>
+                    </otherwise>
+                </choice>
+                <vm:outbound-endpoint ref="UserIdMappingVmEndpoint"/>
+            </processor-chain>
+        </enricher>
         <http:outbound-endpoint address="http://localhost:8130#[header:INBOUND:http.request]" exchange-pattern="request-response">
             <cxf:proxy-client payload="envelope"/>
         </http:outbound-endpoint>

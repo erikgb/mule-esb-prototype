@@ -109,21 +109,23 @@
         <con:settings/>
         <con:runType>SEQUENTIAL</con:runType>
         <con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="greetMe TestCase"
-                      searchProperties="true">
+                      searchProperties="true" id="06ef50d9-5676-4d43-baa7-c9dd22ce78f9">
             <con:settings/>
-            <con:testStep type="request" name="greetMe">
+            <con:testStep type="request" name="greetMeStaticUserId">
                 <con:settings/>
                 <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
                     <con:interface>Greeter_SOAPBinding</con:interface>
                     <con:operation>greetMe</con:operation>
-                    <con:request name="greetMe">
+                    <con:request name="greetMeStaticUserId">
                         <con:settings>
                             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting>
                         </con:settings>
                         <con:encoding>UTF-8</con:encoding>
                         <con:endpoint>http://localhost:8088/Greeter</con:endpoint>
                         <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:typ="http://apache.org/hello_world_soap_http/types">
-   <soapenv:Header/>
+   <soapenv:Header>
+      <a:userId xmlns:a="http://example.com">erikbo</a:userId>
+   </soapenv:Header>
    <soapenv:Body>
       <typ:greetMe>
          <typ:requestType>World</typ:requestType>
@@ -140,6 +142,93 @@
                         <con:assertion type="Schema Compliance" name="Schema Compliance">
                             <con:configuration>
                                 <definition/>
+                            </con:configuration>
+                        </con:assertion>
+                        <con:assertion type="XPath Match" name="XPath Match">
+                            <con:configuration>
+                                <path>declare namespace a='http://example.com';
+                                    //a:userId[1]
+                                </path>
+                                <content>${greetMeStaticUserId#Request#declare namespace a='http://example.com'; //a:userId[1]}</content>
+                                <allowWildcards>false</allowWildcards>
+                                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                                <ignoreComments>false</ignoreComments>
+                            </con:configuration>
+                        </con:assertion>
+                        <con:assertion type="XPath Match" name="MappedUserId Equals">
+                            <con:configuration>
+                                <path>declare namespace a='http://example.com';
+                                    //a:mappedUserId[1]/text()
+                                </path>
+                                <content>staticUserIdMapped</content>
+                                <allowWildcards>false</allowWildcards>
+                                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                                <ignoreComments>false</ignoreComments>
+                            </con:configuration>
+                        </con:assertion>
+                        <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+                        <con:jmsPropertyConfig/>
+                        <con:wsaConfig action="http://apache.org/hello_world_soap_http/Greeter/greetMeRequest" mustUnderstand="NONE"
+                                       version="200508"/>
+                        <con:wsrmConfig version="1.2"/>
+                    </con:request>
+                </con:config>
+            </con:testStep>
+            <con:testStep type="request" name="greetMeXPath">
+                <con:settings/>
+                <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                    <con:interface>Greeter_SOAPBinding</con:interface>
+                    <con:operation>greetMe</con:operation>
+                    <con:request name="greetMeXPath">
+                        <con:settings>
+                            <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="transformer" value="xpath"
+                                xmlns="http://eviware.com/soapui/config"/>
+                            </con:setting>
+                        </con:settings>
+                        <con:encoding>UTF-8</con:encoding>
+                        <con:endpoint>http://localhost:8088/Greeter</con:endpoint>
+                        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:typ="http://apache.org/hello_world_soap_http/types">
+   <soapenv:Header>
+      <a:userId xmlns:a="http://example.com">erikbo</a:userId>
+   </soapenv:Header>
+   <soapenv:Body>
+      <typ:greetMe>
+         <typ:requestType>World</typ:requestType>
+      </typ:greetMe>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+                        <con:assertion type="Valid HTTP Status Codes" name="Valid HTTP Status Codes">
+                            <con:configuration>
+                                <codes>200</codes>
+                            </con:configuration>
+                        </con:assertion>
+                        <con:assertion type="SOAP Response" name="SOAP Response"/>
+                        <con:assertion type="SOAP Fault Assertion" name="Not SOAP Fault"/>
+                        <con:assertion type="Schema Compliance" name="Schema Compliance">
+                            <con:configuration>
+                                <definition/>
+                            </con:configuration>
+                        </con:assertion>
+                        <con:assertion type="XPath Match" name="UserId Matched">
+                            <con:configuration>
+                                <path>declare namespace a='http://example.com';
+                                    //a:userId[1]
+                                </path>
+                                <content>${greetMeXPath#Request#declare namespace a='http://example.com'; //a:userId[1]}</content>
+                                <allowWildcards>false</allowWildcards>
+                                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                                <ignoreComments>false</ignoreComments>
+                            </con:configuration>
+                        </con:assertion>
+                        <con:assertion type="XPath Match" name="MappedUserId Matched">
+                            <con:configuration>
+                                <path>declare namespace a='http://example.com';
+                                    //a:mappedUserId[1]
+                                </path>
+                                <content>${greetMeXPath#Request#declare namespace a='http://example.com'; //a:userId[1]}Mapped</content>
+                                <allowWildcards>false</allowWildcards>
+                                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                                <ignoreComments>false</ignoreComments>
                             </con:configuration>
                         </con:assertion>
                         <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
@@ -166,11 +255,15 @@
             <con:defaultResponse>Response 1</con:defaultResponse>
             <con:response name="Response 1" encoding="UTF-8">
                 <con:settings/>
-                <con:responseContent><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:typ="http://apache.org/hello_world_soap_http/types">
-   <soapenv:Header/>
+                <con:script>context.userId = mockRequest.getRequestHeaders().get("mappedUserId")[0]</con:script>
+                <con:responseContent><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:typ="http://apache.org/hello_world_soap_http/types" xmlns:a="http://example.com">
+   <soapenv:Header>
+      <a:userId>${#MockResponse#Request#declare namespace a='http://example.com'; //a:userId[1]}</a:userId>
+      <a:mappedUserId>${userId}</a:mappedUserId>
+   </soapenv:Header>
    <soapenv:Body>
       <typ:greetMeResponse>
-         <typ:responseType>Hello ${#MockResponse#Request#declare namespace typ='http://apache.org/hello_world_soap_http/types'; //typ:greetMe[1]/typ:requestType[1]}</typ:responseType>
+         <typ:responseType>Hello ${#MockResponse#Request#declare namespace typ='http://apache.org/hello_world_soap_http/types'; //typ:greetMe[1]/typ:requestType[1]}!</typ:responseType>
       </typ:greetMeResponse>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:responseContent>
@@ -178,10 +271,18 @@
             </con:response>
             <con:dispatchConfig/>
         </con:mockOperation>
-        <con:properties/>
+        <con:properties>
+            <con:property>
+                <con:name>userId</con:name>
+            </con:property>
+        </con:properties>
     </con:mockService>
     <con:requirements/>
     <con:properties/>
     <con:wssContainer/>
     <con:databaseConnectionContainer/>
+    <con:reporting>
+        <con:xmlTemplates/>
+        <con:parameters/>
+    </con:reporting>
 </con:soapui-project>
