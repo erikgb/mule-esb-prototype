@@ -101,7 +101,10 @@
       </typ:greetMe>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
+                <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+                <con:jmsPropertyConfig/>
                 <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://apache.org/hello_world_soap_http/Greeter/greetMeRequest"/>
+                <con:wsrmConfig version="1.2"/>
             </con:call>
         </con:operation>
     </con:interface>
@@ -144,7 +147,7 @@
                                 <definition/>
                             </con:configuration>
                         </con:assertion>
-                        <con:assertion type="XPath Match" name="XPath Match">
+                        <con:assertion type="XPath Match" name="UserId Matched">
                             <con:configuration>
                                 <path>declare namespace a='http://example.com';
                                     //a:userId[1]
@@ -155,7 +158,7 @@
                                 <ignoreComments>false</ignoreComments>
                             </con:configuration>
                         </con:assertion>
-                        <con:assertion type="XPath Match" name="MappedUserId Equals">
+                        <con:assertion type="XPath Match" name="MappedUserId Matched">
                             <con:configuration>
                                 <path>declare namespace a='http://example.com';
                                     //a:mappedUserId[1]/text()
@@ -255,11 +258,11 @@
             <con:defaultResponse>Response 1</con:defaultResponse>
             <con:response name="Response 1" encoding="UTF-8">
                 <con:settings/>
-                <con:script>context.userId = mockRequest.getRequestHeaders().get("mappedUserId")[0]</con:script>
+                <con:script>context.mappedUserId = mockRequest.getRequestHeaders().get("mappedUserId")[0]</con:script>
                 <con:responseContent><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:typ="http://apache.org/hello_world_soap_http/types" xmlns:a="http://example.com">
    <soapenv:Header>
       <a:userId>${#MockResponse#Request#declare namespace a='http://example.com'; //a:userId[1]}</a:userId>
-      <a:mappedUserId>${userId}</a:mappedUserId>
+      <a:mappedUserId>${mappedUserId}</a:mappedUserId>
    </soapenv:Header>
    <soapenv:Body>
       <typ:greetMeResponse>
@@ -285,4 +288,5 @@
         <con:xmlTemplates/>
         <con:parameters/>
     </con:reporting>
+    <con:sensitiveInformation/>
 </con:soapui-project>

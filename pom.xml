@@ -13,7 +13,7 @@
 
     <modules>
         <module>mule-prototype-s1</module>
-        <!--module>mule-prototype-s2</module-->
+        <module>mule-prototype-s2</module>
     </modules>
 
     <build>
@@ -160,6 +160,22 @@
                 <version>${mule.version}</version>
                 <scope>provided</scope>
             </dependency>
+
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${org.slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-log4j12</artifactId>
+                <version>${org.slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>jcl-over-slf4j</artifactId>
+                <version>${org.slf4j.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -169,6 +185,8 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <mule.version>3.2.0</mule.version>
+        <org.apache.cxf.version>2.3.1</org.apache.cxf.version>
+        <org.slf4j.version>1.6.3</org.slf4j.version>
         <!-- Tools properties -->
         <jdk.version>1.6</jdk.version>
     </properties>

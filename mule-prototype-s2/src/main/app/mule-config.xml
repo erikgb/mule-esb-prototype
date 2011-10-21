@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
+      xmlns:cxf="http://www.mulesoft.org/schema/mule/cxf"
+      xmlns:cxf-wsa="http://cxf.apache.org/ws/addressing"
+      xmlns:cxf-core="http://cxf.apache.org/core"
+      xsi:schemaLocation="
+        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/3.2/mule.xsd
+        http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/3.2/mule-http.xsd
+        http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/3.2/mule-jms.xsd
+        http://www.mulesoft.org/schema/mule/cxf http://www.mulesoft.org/schema/mule/cxf/3.2/mule-cxf.xsd
+        http://cxf.apache.org/ws/addressing http://cxf.apache.org/schemas/ws-addr-conf.xsd
+        http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd
+        ">
+
+    <jms:activemq-connector name="jmsConnector" brokerURL="vm://localhost"/>
+
+    <flow name="HelloWorldFlow">
+        <http:inbound-endpoint address="http://localhost:8088/Greeter" exchange-pattern="request-response"/>
+        <cxf:proxy-service payload="envelope" wsdlLocation="hello_world.wsdl" namespace="http://apache.org/hello_world_soap_http"
+                           service="SOAPService">
+            <cxf:features>
+                <cxf-wsa:addressing/>
+            </cxf:features>
+        </cxf:proxy-service>
+        <jms:outbound-endpoint queue="request.queue" exchange-pattern="request-response">
+            <cxf:proxy-client payload="envelope"/>
+        </jms:outbound-endpoint>
+    </flow>
+
+    <flow name="SubscribeProcessFlow">
+        <jms:inbound-endpoint queue="request.queue" exchange-pattern="request-response">
+            <cxf:jaxws-service serviceClass="org.apache.hello_world_soap_http.Greeter" validationEnabled="true">
+                <cxf:features>
+                    <cxf-core:logging/>
+                    <cxf-wsa:addressing/>
+                </cxf:features>
+            </cxf:jaxws-service>
+        </jms:inbound-endpoint>
+        <logger level="INFO"/>
+        <component class="no.statnett.esb.mule.GreeterImpl"/>
+        <logger level="INFO"/>
+    </flow>
+</mule>
